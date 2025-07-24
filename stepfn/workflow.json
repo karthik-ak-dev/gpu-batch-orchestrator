@@ -1,0 +1,83 @@
+{
+    "Comment": "Parallel jobs (job1, job2) -> job3 -> job4",
+    "StartAt": "ParallelJobs",
+    "States": {
+        "ParallelJobs": {
+            "Type": "Parallel",
+            "Branches": [
+                {
+                    "StartAt": "Job1",
+                    "States": {
+                        "Job1": {
+                            "Type": "Task",
+                            "Resource": "arn:aws:states:::batch:submitJob.sync",
+                            "Parameters": {
+                                "JobName": "job1",
+                                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
+                                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job1:2",
+                                "ContainerOverrides": {
+                                    "Environment": []
+                                },
+                                "Parameters": {}
+                            },
+                            "End": true
+                        }
+                    }
+                },
+                {
+                    "StartAt": "Job2",
+                    "States": {
+                        "Job2": {
+                            "Type": "Task",
+                            "Resource": "arn:aws:states:::batch:submitJob.sync",
+                            "Parameters": {
+                                "JobName": "job2",
+                                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
+                                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job2:2",
+                                "ContainerOverrides": {
+                                    "Environment": []
+                                },
+                                "Parameters": {}
+                            },
+                            "End": true
+                        }
+                    }
+                }
+            ],
+            "Next": "Job3",
+            "ResultPath": "$.parallelResults"
+        },
+        "Job3": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::batch:submitJob.sync",
+            "Parameters": {
+                "JobName": "job3",
+                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
+                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job3:2",
+                "ContainerOverrides": {
+                    "Environment": []
+                },
+                "Parameters": {}
+            },
+            "InputPath": "$.parallelResults",
+            "ResultPath": "$.job3Result",
+            "Next": "Job4"
+        },
+        "Job4": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::batch:submitJob.sync",
+            "Parameters": {
+                "JobName": "job4",
+                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
+                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job4:2",
+                "ContainerOverrides": {
+                    "Environment": []
+                },
+                "Parameters": {}
+            },
+            "InputPath": "$.job3Result",
+            "ResultPath": "$.job4Result",
+            "End": true
+        }
+    }
+}
