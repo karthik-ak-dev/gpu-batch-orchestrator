@@ -1,0 +1,4 @@
+# Example variables for gpu-batch-orchestrator
+
+aws_region   = "us-east-1"
+ecr_repo_name = "gpu-batch-jobs" 
