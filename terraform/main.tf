@@ -35,11 +35,17 @@ resource "aws_iam_role_policy_attachment" "batch_service" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSBatchServiceRole"
 }
 
-# Batch compute environment for GPU workloads (Spot instances, default VPC)
+# Attach AmazonEC2ContainerServiceFullAccess policy to Batch service role
+resource "aws_iam_role_policy_attachment" "batch_service_ecs_full" {
+  role       = aws_iam_role.batch_service.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerServiceFullAccess"
+}
+
+# Batch compute environment for GPU workloads (EC2 On-Demand instances, default VPC)
 resource "aws_batch_compute_environment" "gpu" {
   name = "gpu-batch-ce"
   compute_resources {
-    type                = "SPOT"                                     # Use Spot instances for cost savings
+    type                = "EC2"                                      # Use On-Demand EC2 instances
     max_vcpus           = 16                                         # Max vCPUs for scaling
     min_vcpus           = 0                                          # No always-on capacity
     desired_vcpus       = 0                                          # Start with zero, scale as needed
@@ -47,7 +53,7 @@ resource "aws_batch_compute_environment" "gpu" {
     subnets             = data.aws_subnets.default.ids               # Use default VPC subnets
     security_group_ids  = [data.aws_security_group.default.id]       # Use default security group
     instance_role       = aws_iam_instance_profile.ecs_instance.arn  # EC2 instance profile for ECS
-    allocation_strategy = "BEST_FIT_PROGRESSIVE"                     # Optimize Spot usage
+    allocation_strategy = "BEST_FIT_PROGRESSIVE"                     # Optimize usage
   }
   service_role = aws_iam_role.batch_service.arn
   type         = "MANAGED"
