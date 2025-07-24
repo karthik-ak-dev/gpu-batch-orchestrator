@@ -37,7 +37,7 @@ resource "aws_iam_role_policy_attachment" "batch_service" {
 
 # Batch compute environment for GPU workloads (Spot instances, default VPC)
 resource "aws_batch_compute_environment" "gpu" {
-  compute_environment_name = "gpu-batch-ce"
+  name = "gpu-batch-ce"
   compute_resources {
     type                = "SPOT"                                     # Use Spot instances for cost savings
     max_vcpus           = 16                                         # Max vCPUs for scaling
@@ -101,6 +101,12 @@ data "aws_iam_policy_document" "ecs_instance_assume_role" {
 resource "aws_iam_role_policy_attachment" "ecs_instance" {
   role       = aws_iam_role.ecs_instance.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonEC2ContainerServiceforEC2Role"
+}
+
+# Attach AmazonS3FullAccess policy to EC2 role for full S3 access from jobs
+resource "aws_iam_role_policy_attachment" "ecs_instance_s3" {
+  role       = aws_iam_role.ecs_instance.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3FullAccess"
 }
 
 # Instance profile for EC2 instances in the compute environment

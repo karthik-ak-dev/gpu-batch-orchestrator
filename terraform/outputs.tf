@@ -10,6 +10,11 @@ output "batch_job_queue_arn" {
   value = aws_batch_job_queue.main.arn
 }
 
-output "batch_job_definition_arn" {
-  value = aws_batch_job_definition.job.arn
-} 
+output "batch_job_definition_arns" {
+  value = [
+    aws_batch_job_definition.job1.arn,
+    aws_batch_job_definition.job2.arn,
+    aws_batch_job_definition.job3.arn,
+    aws_batch_job_definition.job4.arn
+  ]
+}
