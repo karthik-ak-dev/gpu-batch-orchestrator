@@ -14,7 +14,7 @@
                             "Parameters": {
                                 "JobName": "job1",
                                 "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
-                                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job1:2",
+                                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job1:3",
                                 "ContainerOverrides": {
                                     "Environment": []
                                 },
@@ -33,7 +33,7 @@
                             "Parameters": {
                                 "JobName": "job2",
                                 "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
-                                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job2:2",
+                                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job2:3",
                                 "ContainerOverrides": {
                                     "Environment": []
                                 },
@@ -53,7 +53,7 @@
             "Parameters": {
                 "JobName": "job3",
                 "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job3:2",
+                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job3:3",
                 "ContainerOverrides": {
                     "Environment": []
                 },
@@ -69,7 +69,7 @@
             "Parameters": {
                 "JobName": "job4",
                 "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job4:2",
+                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job4:3",
                 "ContainerOverrides": {
                     "Environment": []
                 },

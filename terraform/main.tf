@@ -38,7 +38,7 @@ resource "aws_iam_role_policy_attachment" "batch_service" {
 # Attach AmazonEC2ContainerServiceFullAccess policy to Batch service role
 resource "aws_iam_role_policy_attachment" "batch_service_ecs_full" {
   role       = aws_iam_role.batch_service.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonEC2ContainerServiceFullAccess"
+  policy_arn = "arn:aws:iam::aws:policy/AmazonECS_FullAccess"
 }
 
 # Batch compute environment for GPU workloads (EC2 On-Demand instances, default VPC)
@@ -46,7 +46,7 @@ resource "aws_batch_compute_environment" "gpu" {
   name = "gpu-batch-ce"
   compute_resources {
     type                = "EC2"                                      # Use On-Demand EC2 instances
-    max_vcpus           = 16                                         # Max vCPUs for scaling
+    max_vcpus           = 4                                          # Max vCPUs for scaling
     min_vcpus           = 0                                          # No always-on capacity
     desired_vcpus       = 0                                          # Start with zero, scale as needed
     instance_type       = ["g4dn.xlarge", "g5.xlarge", "p3.2xlarge"] # GPU-backed EC2 types
