@@ -146,7 +146,6 @@ resource "aws_batch_job_definition" "job1" {
     vcpus : 1,                                              # Minimum vCPUs
     memory : 512,                                           # Minimum memory in MiB
     resourceRequirements : [{ type : "GPU", value : "1" }], # Minimum 1 GPU (cannot be less)
-    command : ["python", "main.py"],
     jobRoleArn : aws_iam_role.ecs_instance.arn
   })
 }
@@ -160,7 +159,6 @@ resource "aws_batch_job_definition" "job2" {
     vcpus : 1,
     memory : 512,
     resourceRequirements : [{ type : "GPU", value : "1" }],
-    command : ["python", "main.py"],
     jobRoleArn : aws_iam_role.ecs_instance.arn
   })
 }
@@ -174,7 +172,6 @@ resource "aws_batch_job_definition" "job3" {
     vcpus : 1,
     memory : 512,
     resourceRequirements : [{ type : "GPU", value : "1" }],
-    command : ["python", "main.py"],
     jobRoleArn : aws_iam_role.ecs_instance.arn
   })
 }
@@ -188,7 +185,6 @@ resource "aws_batch_job_definition" "job4" {
     vcpus : 1,
     memory : 512,
     resourceRequirements : [{ type : "GPU", value : "1" }],
-    command : ["python", "main.py"],
     jobRoleArn : aws_iam_role.ecs_instance.arn
   })
 }
