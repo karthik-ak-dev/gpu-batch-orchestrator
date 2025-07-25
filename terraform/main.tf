@@ -92,13 +92,13 @@ resource "aws_iam_role" "ecs_instance" {
 }
 
 # IAM policy document for EC2 instance role
-# Allows EC2 to assume this role
+# Allows EC2 and ECS to assume this role
 data "aws_iam_policy_document" "ecs_instance_assume_role" {
   statement {
     actions = ["sts:AssumeRole"]
     principals {
       type        = "Service"
-      identifiers = ["ec2.amazonaws.com"]
+      identifiers = ["ec2.amazonaws.com", "ecs.amazonaws.com", "ecs-tasks.amazonaws.com"]
     }
   }
 }
