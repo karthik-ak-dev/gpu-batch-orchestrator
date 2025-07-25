@@ -3,6 +3,12 @@ import json
 
 if __name__ == "__main__":
     input_json = sys.stdin.read() or "[]"
+    print("=== JOB3 DEBUG ===")
+    print(f"Raw input received: {input_json}")
+    print(f"Input type: {type(input_json)}")
+    print(f"Input length: {len(input_json)}")
+    print("==================")
+
     arr = json.loads(input_json)
     result = {}
     for d in arr:
