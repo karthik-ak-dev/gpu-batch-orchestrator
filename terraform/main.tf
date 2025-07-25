@@ -45,15 +45,15 @@ resource "aws_iam_role_policy_attachment" "batch_service_ecs_full" {
 resource "aws_batch_compute_environment" "gpu" {
   name = "gpu-batch-ce"
   compute_resources {
-    type                = "EC2"                                      # Use On-Demand EC2 instances
-    max_vcpus           = 4                                          # Max vCPUs for scaling
-    min_vcpus           = 0                                          # No always-on capacity
-    desired_vcpus       = 0                                          # Start with zero, scale as needed
-    instance_type       = ["g4dn.xlarge", "g5.xlarge", "p3.2xlarge"] # GPU-backed EC2 types
-    subnets             = data.aws_subnets.default.ids               # Use default VPC subnets
-    security_group_ids  = [data.aws_security_group.default.id]       # Use default security group
-    instance_role       = aws_iam_instance_profile.ecs_instance.arn  # EC2 instance profile for ECS
-    allocation_strategy = "BEST_FIT_PROGRESSIVE"                     # Optimize usage
+    type                = "EC2"                                     # Use On-Demand EC2 instances
+    max_vcpus           = 4                                         # Max vCPUs for scaling
+    min_vcpus           = 0                                         # No always-on capacity
+    desired_vcpus       = 0                                         # Start with zero, scale as needed
+    instance_type       = ["g4dn.xlarge"]                           # GPU-backed EC2 types
+    subnets             = data.aws_subnets.default.ids              # Use default VPC subnets
+    security_group_ids  = [data.aws_security_group.default.id]      # Use default security group
+    instance_role       = aws_iam_instance_profile.ecs_instance.arn # EC2 instance profile for ECS
+    allocation_strategy = "BEST_FIT_PROGRESSIVE"                    # Optimize usage
   }
   service_role = aws_iam_role.batch_service.arn
   type         = "MANAGED"
@@ -149,8 +149,8 @@ resource "aws_batch_job_definition" "job1" {
   type = "container"
   container_properties = jsonencode({
     image : "${aws_ecr_repository.batch_jobs.repository_url}:job1-latest",
-    vcpus : 1,                                              # Minimum vCPUs
-    memory : 512,                                           # Minimum memory in MiB
+    vcpus : 2,                                              # 2 vCPUs per job
+    memory : 4096,                                          # 4GB memory in MiB
     resourceRequirements : [{ type : "GPU", value : "1" }], # Minimum 1 GPU (cannot be less)
     jobRoleArn : aws_iam_role.ecs_instance.arn
   })
@@ -162,8 +162,8 @@ resource "aws_batch_job_definition" "job2" {
   type = "container"
   container_properties = jsonencode({
     image : "${aws_ecr_repository.batch_jobs.repository_url}:job2-latest",
-    vcpus : 1,
-    memory : 512,
+    vcpus : 2,
+    memory : 4096,
     resourceRequirements : [{ type : "GPU", value : "1" }],
     jobRoleArn : aws_iam_role.ecs_instance.arn
   })
@@ -175,8 +175,8 @@ resource "aws_batch_job_definition" "job3" {
   type = "container"
   container_properties = jsonencode({
     image : "${aws_ecr_repository.batch_jobs.repository_url}:job3-latest",
-    vcpus : 1,
-    memory : 512,
+    vcpus : 2,
+    memory : 4096,
     resourceRequirements : [{ type : "GPU", value : "1" }],
     jobRoleArn : aws_iam_role.ecs_instance.arn
   })
@@ -188,8 +188,8 @@ resource "aws_batch_job_definition" "job4" {
   type = "container"
   container_properties = jsonencode({
     image : "${aws_ecr_repository.batch_jobs.repository_url}:job4-latest",
-    vcpus : 1,
-    memory : 512,
+    vcpus : 2,
+    memory : 4096,
     resourceRequirements : [{ type : "GPU", value : "1" }],
     jobRoleArn : aws_iam_role.ecs_instance.arn
   })
