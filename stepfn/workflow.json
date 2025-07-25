@@ -1,5 +1,5 @@
 {
-    "Comment": "Parallel jobs (job1, job2) -> job3 -> job4",
+    "Comment": "Parallel jobs (job1, job2) -> job3 -> job4 using S3 for data transfer",
     "StartAt": "ParallelJobs",
     "States": {
         "ParallelJobs": {
@@ -16,9 +16,25 @@
                                 "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
                                 "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job1:4",
                                 "ContainerOverrides": {
-                                    "Environment": []
-                                },
-                                "Parameters": {}
+                                    "Environment": [
+                                        {
+                                            "Name": "EXECUTION_ID",
+                                            "Value.$": "$$.Execution.Name"
+                                        },
+                                        {
+                                            "Name": "S3_BUCKET",
+                                            "Value": "gpu-batch-orchestrator-results-qwerty"
+                                        },
+                                        {
+                                            "Name": "JOB_NAME",
+                                            "Value": "job1"
+                                        },
+                                        {
+                                            "Name": "INPUT_DATA",
+                                            "Value.$": "States.JsonToString($)"
+                                        }
+                                    ]
+                                }
                             },
                             "End": true
                         }
@@ -35,17 +51,32 @@
                                 "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
                                 "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job2:4",
                                 "ContainerOverrides": {
-                                    "Environment": []
-                                },
-                                "Parameters": {}
+                                    "Environment": [
+                                        {
+                                            "Name": "EXECUTION_ID",
+                                            "Value.$": "$$.Execution.Name"
+                                        },
+                                        {
+                                            "Name": "S3_BUCKET",
+                                            "Value": "gpu-batch-orchestrator-results-qwerty"
+                                        },
+                                        {
+                                            "Name": "JOB_NAME",
+                                            "Value": "job2"
+                                        },
+                                        {
+                                            "Name": "INPUT_DATA",
+                                            "Value.$": "States.JsonToString($)"
+                                        }
+                                    ]
+                                }
                             },
                             "End": true
                         }
                     }
                 }
             ],
-            "Next": "Job3",
-            "ResultPath": "$.parallelResults"
+            "Next": "Job3"
         },
         "Job3": {
             "Type": "Task",
@@ -55,12 +86,22 @@
                 "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
                 "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job3:4",
                 "ContainerOverrides": {
-                    "Environment": []
-                },
-                "Parameters": {}
+                    "Environment": [
+                        {
+                            "Name": "EXECUTION_ID",
+                            "Value.$": "$$.Execution.Name"
+                        },
+                        {
+                            "Name": "S3_BUCKET",
+                            "Value": "gpu-batch-orchestrator-results-qwerty"
+                        },
+                        {
+                            "Name": "JOB_NAME",
+                            "Value": "job3"
+                        }
+                    ]
+                }
             },
-            "InputPath": "$.parallelResults",
-            "ResultPath": "$.job3Result",
             "Next": "Job4"
         },
         "Job4": {
@@ -71,12 +112,22 @@
                 "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
                 "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job4:4",
                 "ContainerOverrides": {
-                    "Environment": []
-                },
-                "Parameters": {}
+                    "Environment": [
+                        {
+                            "Name": "EXECUTION_ID",
+                            "Value.$": "$$.Execution.Name"
+                        },
+                        {
+                            "Name": "S3_BUCKET",
+                            "Value": "gpu-batch-orchestrator-results-qwerty"
+                        },
+                        {
+                            "Name": "JOB_NAME",
+                            "Value": "job4"
+                        }
+                    ]
+                }
             },
-            "InputPath": "$.job3Result",
-            "ResultPath": "$.job4Result",
             "End": true
         }
     }

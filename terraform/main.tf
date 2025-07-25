@@ -6,6 +6,11 @@ provider "aws" {
   region = var.aws_region
 }
 
+# S3 bucket for storing job results (simple, no versioning or encryption)
+resource "aws_s3_bucket" "job_results" {
+  bucket = var.results_bucket_name
+}
+
 # ECR repository for all job images
 resource "aws_ecr_repository" "batch_jobs" {
   name = var.ecr_repo_name
