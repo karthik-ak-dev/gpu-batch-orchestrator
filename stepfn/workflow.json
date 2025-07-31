@@ -1,131 +1,111 @@
 {
-    "Comment": "Parallel jobs (job1, job2) -> job3 -> job4 using S3 for data transfer",
-    "StartAt": "ParallelJobs",
+    "Comment": "Sequential jobs (job1_preprocessor -> job2_rpeak -> job3_beats -> job4_pqst -> job5_a1_integ -> job6_templates) using S3 for data transfer",
+    "StartAt": "PrepareEnvironment",
     "States": {
-        "ParallelJobs": {
-            "Type": "Parallel",
-            "Branches": [
-                {
-                    "StartAt": "Job1",
-                    "States": {
-                        "Job1": {
-                            "Type": "Task",
-                            "Resource": "arn:aws:states:::batch:submitJob.sync",
-                            "Parameters": {
-                                "JobName": "job1",
-                                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
-                                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job1:4",
-                                "ContainerOverrides": {
-                                    "Environment": [
-                                        {
-                                            "Name": "EXECUTION_ID",
-                                            "Value.$": "$$.Execution.Name"
-                                        },
-                                        {
-                                            "Name": "S3_BUCKET",
-                                            "Value": "gpu-batch-orchestrator-results-qwerty"
-                                        },
-                                        {
-                                            "Name": "JOB_NAME",
-                                            "Value": "job1"
-                                        },
-                                        {
-                                            "Name": "INPUT_DATA",
-                                            "Value.$": "States.JsonToString($)"
-                                        }
-                                    ]
-                                }
-                            },
-                            "End": true
-                        }
+        "PrepareEnvironment": {
+            "Type": "Pass",
+            "Parameters": {
+                "common_env": [
+                    {
+                        "Name": "EDF_ID",
+                        "Value.$": "$.edf_id"
+                    },
+                    {
+                        "Name": "S3_BUCKET",
+                        "Value": "gpu-batch-orchestrator-results-qwerty"
+                    },
+                    {
+                        "Name": "REDIS_HOST",
+                        "Value": "redis-cluster.redis-cluster.svc.cluster.local"
+                    },
+                    {
+                        "Name": "REDIS_PORT",
+                        "Value": "6379"
+                    },
+                    {
+                        "Name": "INPUT_DATA",
+                        "Value.$": "States.JsonToString($)"
                     }
-                },
-                {
-                    "StartAt": "Job2",
-                    "States": {
-                        "Job2": {
-                            "Type": "Task",
-                            "Resource": "arn:aws:states:::batch:submitJob.sync",
-                            "Parameters": {
-                                "JobName": "job2",
-                                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
-                                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job2:4",
-                                "ContainerOverrides": {
-                                    "Environment": [
-                                        {
-                                            "Name": "EXECUTION_ID",
-                                            "Value.$": "$$.Execution.Name"
-                                        },
-                                        {
-                                            "Name": "S3_BUCKET",
-                                            "Value": "gpu-batch-orchestrator-results-qwerty"
-                                        },
-                                        {
-                                            "Name": "JOB_NAME",
-                                            "Value": "job2"
-                                        },
-                                        {
-                                            "Name": "INPUT_DATA",
-                                            "Value.$": "States.JsonToString($)"
-                                        }
-                                    ]
-                                }
-                            },
-                            "End": true
-                        }
-                    }
-                }
-            ],
-            "Next": "Job3"
+                ],
+                "edf_id.$": "$.edf_id",
+                "edf_file.$": "$.edf_file"
+            },
+            "Next": "Job1_Preprocessor"
         },
-        "Job3": {
+        "Job1_Preprocessor": {
             "Type": "Task",
             "Resource": "arn:aws:states:::batch:submitJob.sync",
             "Parameters": {
-                "JobName": "job3",
+                "JobName": "job1_preprocessor",
                 "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job3:4",
+                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job1-preprocessor:1",
                 "ContainerOverrides": {
-                    "Environment": [
-                        {
-                            "Name": "EXECUTION_ID",
-                            "Value.$": "$$.Execution.Name"
-                        },
-                        {
-                            "Name": "S3_BUCKET",
-                            "Value": "gpu-batch-orchestrator-results-qwerty"
-                        },
-                        {
-                            "Name": "JOB_NAME",
-                            "Value": "job3"
-                        }
-                    ]
+                    "Environment.$": "$.common_env"
                 }
             },
-            "Next": "Job4"
+            "Next": "Job2_Rpeak"
         },
-        "Job4": {
+        "Job2_Rpeak": {
             "Type": "Task",
             "Resource": "arn:aws:states:::batch:submitJob.sync",
             "Parameters": {
-                "JobName": "job4",
+                "JobName": "job2_rpeak",
                 "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job4:4",
+                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job2-rpeak:1",
                 "ContainerOverrides": {
-                    "Environment": [
-                        {
-                            "Name": "EXECUTION_ID",
-                            "Value.$": "$$.Execution.Name"
-                        },
-                        {
-                            "Name": "S3_BUCKET",
-                            "Value": "gpu-batch-orchestrator-results-qwerty"
-                        },
-                        {
-                            "Name": "JOB_NAME",
-                            "Value": "job4"
-                        }
-                    ]
+                    "Environment.$": "$.common_env"
+                }
+            },
+            "Next": "Job3_Beats"
+        },
+        "Job3_Beats": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::batch:submitJob.sync",
+            "Parameters": {
+                "JobName": "job3_beats",
+                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
+                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job3-beats:1",
+                "ContainerOverrides": {
+                    "Environment.$": "$.common_env"
+                }
+            },
+            "Next": "Job4_Pqst"
+        },
+        "Job4_Pqst": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::batch:submitJob.sync",
+            "Parameters": {
+                "JobName": "job4_pqst",
+                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
+                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job4-pqst:1",
+                "ContainerOverrides": {
+                    "Environment.$": "$.common_env"
+                }
+            },
+            "Next": "Job5_A1_Integ"
+        },
+        "Job5_A1_Integ": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::batch:submitJob.sync",
+            "Parameters": {
+                "JobName": "job5_a1_integ",
+                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
+                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job5-a1-integ:1",
+                "ContainerOverrides": {
+                    "Environment.$": "$.common_env"
+                }
+            },
+            "Next": "Job6_Templates"
+        },
+        "Job6_Templates": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::batch:submitJob.sync",
+            "Parameters": {
+                "JobName": "job6_templates",
+                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
+                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job6-templates:1",
+                "ContainerOverrides": {
+                    "Environment.$": "$.common_env"
                 }
             },
             "End": true
