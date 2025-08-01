@@ -12,7 +12,7 @@
                     },
                     {
                         "Name": "S3_BUCKET",
-                        "Value": "gpu-batch-orchestrator-results-qwerty"
+                        "Value": "dev-beatly-crave"
                     },
                     {
                         "Name": "REDIS_HOST",
@@ -37,8 +37,8 @@
             "Resource": "arn:aws:states:::batch:submitJob.sync",
             "Parameters": {
                 "JobName": "job1_preprocessor",
-                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job1-preprocessor:1",
+                "JobQueue": "arn:aws:batch:us-east-1:508153278741:job-queue/stage-beatly-batch-queue",
+                "JobDefinition": "arn:aws:batch:us-east-1:508153278741:job-definition/stage-beatly-job1_preprocessor-job-def:1",
                 "ContainerOverrides": {
                     "Environment.$": "$.common_env"
                 }
@@ -50,8 +50,8 @@
             "Resource": "arn:aws:states:::batch:submitJob.sync",
             "Parameters": {
                 "JobName": "job2_rpeak",
-                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job2-rpeak:1",
+                "JobQueue": "arn:aws:batch:us-east-1:508153278741:job-queue/stage-beatly-batch-queue",
+                "JobDefinition": "arn:aws:batch:us-east-1:508153278741:job-definition/stage-beatly-job2_rpeak-job-def:1",
                 "ContainerOverrides": {
                     "Environment.$": "$.common_env"
                 }
@@ -63,8 +63,8 @@
             "Resource": "arn:aws:states:::batch:submitJob.sync",
             "Parameters": {
                 "JobName": "job3_beats",
-                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job3-beats:1",
+                "JobQueue": "arn:aws:batch:us-east-1:508153278741:job-queue/stage-beatly-batch-queue",
+                "JobDefinition": "arn:aws:batch:us-east-1:508153278741:job-definition/stage-beatly-job3_beats-job-def:1",
                 "ContainerOverrides": {
                     "Environment.$": "$.common_env"
                 }
@@ -76,8 +76,8 @@
             "Resource": "arn:aws:states:::batch:submitJob.sync",
             "Parameters": {
                 "JobName": "job4_pqst",
-                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job4-pqst:1",
+                "JobQueue": "arn:aws:batch:us-east-1:508153278741:job-queue/stage-beatly-batch-queue",
+                "JobDefinition": "arn:aws:batch:us-east-1:508153278741:job-definition/stage-beatly-job4_pqst-job-def:1",
                 "ContainerOverrides": {
                     "Environment.$": "$.common_env"
                 }
@@ -89,8 +89,8 @@
             "Resource": "arn:aws:states:::batch:submitJob.sync",
             "Parameters": {
                 "JobName": "job5_a1_integ",
-                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job5-a1-integ:1",
+                "JobQueue": "arn:aws:batch:us-east-1:508153278741:job-queue/stage-beatly-batch-queue",
+                "JobDefinition": "arn:aws:batch:us-east-1:508153278741:job-definition/stage-beatly-job5_a1_integ-job-def:1",
                 "ContainerOverrides": {
                     "Environment.$": "$.common_env"
                 }
@@ -102,8 +102,8 @@
             "Resource": "arn:aws:states:::batch:submitJob.sync",
             "Parameters": {
                 "JobName": "job6_templates",
-                "JobQueue": "arn:aws:batch:us-east-2:508153278741:job-queue/gpu-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-2:508153278741:job-definition/gpu-batch-job6-templates:1",
+                "JobQueue": "arn:aws:batch:us-east-1:508153278741:job-queue/stage-beatly-batch-queue",
+                "JobDefinition": "arn:aws:batch:us-east-1:508153278741:job-definition/stage-beatly-job6_templates-job-def:1",
                 "ContainerOverrides": {
                     "Environment.$": "$.common_env"
                 }
