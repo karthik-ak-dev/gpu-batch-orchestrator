@@ -30,7 +30,6 @@ ENV/
 
 # Docker
 **/output.txt
-**/Dockerfile*
 
 # VS Code
 .vscode/
