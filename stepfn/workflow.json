@@ -1,5 +1,5 @@
 {
-    "Comment": "Sequential jobs (job1_preprocessor -> job2_rpeak -> job3_beats -> job4_pqst -> job5_a1_integ -> job6_templates) using S3 for data transfer",
+    "Comment": "Sequential batch jobs (job1 -> job2 -> job3) using S3 for data transfer between stages",
     "StartAt": "PrepareEnvironment",
     "States": {
         "PrepareEnvironment": {
@@ -7,107 +7,62 @@
             "Parameters": {
                 "common_env": [
                     {
-                        "Name": "EDF_ID",
-                        "Value.$": "$.edf_id"
+                        "Name": "JOB_ID",
+                        "Value.$": "$.job_id"
                     },
                     {
                         "Name": "S3_BUCKET",
-                        "Value": "dev-beatly-crave"
-                    },
-                    {
-                        "Name": "REDIS_HOST",
-                        "Value": "redis-cluster.redis-cluster.svc.cluster.local"
-                    },
-                    {
-                        "Name": "REDIS_PORT",
-                        "Value": "6379"
+                        "Value": "my-results-bucket"
                     },
                     {
                         "Name": "INPUT_DATA",
                         "Value.$": "States.JsonToString($)"
                     }
                 ],
-                "edf_id.$": "$.edf_id",
-                "edf_file.$": "$.edf_file"
+                "job_id.$": "$.job_id"
             },
-            "Next": "Job1_Preprocessor"
+            "Next": "Job1_Ingestion"
         },
-        "Job1_Preprocessor": {
+        "Job1_Ingestion": {
             "Type": "Task",
             "Resource": "arn:aws:states:::batch:submitJob.sync",
             "Parameters": {
-                "JobName": "job1_preprocessor",
-                "JobQueue": "arn:aws:batch:us-east-1:508153278741:job-queue/stage-beatly-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-1:508153278741:job-definition/stage-beatly-job1_preprocessor-job-def:1",
+                "JobName": "job1_ingestion",
+                "JobQueue": "arn:aws:batch:us-east-1:123456789012:job-queue/gpu-batch-queue",
+                "JobDefinition": "arn:aws:batch:us-east-1:123456789012:job-definition/gpu-batch-job1:1",
                 "ContainerOverrides": {
                     "Environment.$": "$.common_env"
                 }
             },
-            "Next": "Job2_Rpeak"
+            "ResultPath": "$.job1_result",
+            "Next": "Job2_Transform"
         },
-        "Job2_Rpeak": {
+        "Job2_Transform": {
             "Type": "Task",
             "Resource": "arn:aws:states:::batch:submitJob.sync",
             "Parameters": {
-                "JobName": "job2_rpeak",
-                "JobQueue": "arn:aws:batch:us-east-1:508153278741:job-queue/stage-beatly-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-1:508153278741:job-definition/stage-beatly-job2_rpeak-job-def:1",
+                "JobName": "job2_transform",
+                "JobQueue": "arn:aws:batch:us-east-1:123456789012:job-queue/gpu-batch-queue",
+                "JobDefinition": "arn:aws:batch:us-east-1:123456789012:job-definition/gpu-batch-job2:1",
                 "ContainerOverrides": {
                     "Environment.$": "$.common_env"
                 }
             },
-            "Next": "Job3_Beats"
+            "ResultPath": "$.job2_result",
+            "Next": "Job3_Aggregate"
         },
-        "Job3_Beats": {
+        "Job3_Aggregate": {
             "Type": "Task",
             "Resource": "arn:aws:states:::batch:submitJob.sync",
             "Parameters": {
-                "JobName": "job3_beats",
-                "JobQueue": "arn:aws:batch:us-east-1:508153278741:job-queue/stage-beatly-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-1:508153278741:job-definition/stage-beatly-job3_beats-job-def:1",
+                "JobName": "job3_aggregate",
+                "JobQueue": "arn:aws:batch:us-east-1:123456789012:job-queue/gpu-batch-queue",
+                "JobDefinition": "arn:aws:batch:us-east-1:123456789012:job-definition/gpu-batch-job3:1",
                 "ContainerOverrides": {
                     "Environment.$": "$.common_env"
                 }
             },
-            "Next": "Job4_Pqst"
-        },
-        "Job4_Pqst": {
-            "Type": "Task",
-            "Resource": "arn:aws:states:::batch:submitJob.sync",
-            "Parameters": {
-                "JobName": "job4_pqst",
-                "JobQueue": "arn:aws:batch:us-east-1:508153278741:job-queue/stage-beatly-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-1:508153278741:job-definition/stage-beatly-job4_pqst-job-def:1",
-                "ContainerOverrides": {
-                    "Environment.$": "$.common_env"
-                }
-            },
-            "Next": "Job5_A1_Integ"
-        },
-        "Job5_A1_Integ": {
-            "Type": "Task",
-            "Resource": "arn:aws:states:::batch:submitJob.sync",
-            "Parameters": {
-                "JobName": "job5_a1_integ",
-                "JobQueue": "arn:aws:batch:us-east-1:508153278741:job-queue/stage-beatly-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-1:508153278741:job-definition/stage-beatly-job5_a1_integ-job-def:1",
-                "ContainerOverrides": {
-                    "Environment.$": "$.common_env"
-                }
-            },
-            "Next": "Job6_Templates"
-        },
-        "Job6_Templates": {
-            "Type": "Task",
-            "Resource": "arn:aws:states:::batch:submitJob.sync",
-            "Parameters": {
-                "JobName": "job6_templates",
-                "JobQueue": "arn:aws:batch:us-east-1:508153278741:job-queue/stage-beatly-batch-queue",
-                "JobDefinition": "arn:aws:batch:us-east-1:508153278741:job-definition/stage-beatly-job6_templates-job-def:1",
-                "ContainerOverrides": {
-                    "Environment.$": "$.common_env"
-                }
-            },
+            "ResultPath": "$.job3_result",
             "End": true
         }
     }

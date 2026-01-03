@@ -2,4 +2,4 @@
 
 aws_region   = "us-east-1"
 ecr_repo_name = "gpu-batch-jobs" 
-results_bucket_name = "gpu-batch-orchestrator-results-qwerty"
+results_bucket_name = "my-gpu-batch-results"

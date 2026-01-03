@@ -3,7 +3,7 @@ name: Build and Push Job Images to ECR
 on:
   push:
     branches:
-      - beatly
+      # - main
 
 jobs:
   build-and-push:
@@ -26,32 +26,17 @@ jobs:
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push job1_preprocessor image
+      - name: Build, tag, and push job1 image
         run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job1_preprocessor-latest jobs/job1_preprocessor
-          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job1_preprocessor-latest
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job1-latest jobs/job1
+          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job1-latest
 
-      - name: Build, tag, and push job2_rpeak image
+      - name: Build, tag, and push job2 image
         run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job2_rpeak-latest jobs/job2_rpeak
-          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job2_rpeak-latest
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job2-latest jobs/job2
+          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job2-latest
 
-      - name: Build, tag, and push job3_beats image
+      - name: Build, tag, and push job3 image
         run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job3_beats-latest jobs/job3_beats
-          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job3_beats-latest
-
-      - name: Build, tag, and push job4_pqst image
-        run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job4_pqst-latest jobs/job4_pqst
-          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job4_pqst-latest
-
-      - name: Build, tag, and push job5_a1_integ image
-        run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job5_a1_integ-latest jobs/job5_a1_integ
-          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job5_a1_integ-latest
-
-      - name: Build, tag, and push job6_templates image
-        run: |
-          docker build -t ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job6_templates-latest jobs/job6_templates
-          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job6_templates-latest 
+          docker build -t ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job3-latest jobs/job3
+          docker push ${{ steps.login-ecr.outputs.registry }}/$ECR_REPO_NAME:job3-latest
