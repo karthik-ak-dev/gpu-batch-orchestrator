@@ -1,8 +1,8 @@
 name: Build and Push Job Images to ECR
 
-on:
-  push:
-    branches:
+# on:
+#   push:
+#     branches:
       # - main
 
 jobs:
